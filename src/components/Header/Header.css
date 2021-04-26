@@ -1,0 +1,22 @@
+.header{
+    background-color: #c4deff;
+    padding: 15px 10px;
+}
+.header__inner {
+    display: flex;
+    justify-content: space-between;
+}
+
+.header__logo {
+
+}
+
+.header__menu li {
+    display: inline-block;
+    margin: 0 15px;
+}
+
+.header__menu a {
+    margin-top: 13px;
+    margin-bottom: 9px;
+}
