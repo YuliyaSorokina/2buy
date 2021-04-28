@@ -15,7 +15,7 @@ export default class App extends Component {
         return (
             <div className="App">
                 <Header/>
-                <CategoryList parentId={null}/>
+                <CategoryList parent={null}/>
             </div>
         );
     }

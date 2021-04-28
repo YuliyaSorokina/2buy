@@ -11,24 +11,15 @@ export default class CategoryService {
         return await res.json();
     }
 
-    getAllCategories = async () => {
-        const res = await this.getResource('/api/v1/category/');
+    getCategories = async (id) => {
+        const res = await this.getResource(`/api/v1/category/${id}`);
         return res.map(this._transformCategory);
-    }
-
-
-    getCategoryById = async (id) => {
-        const res = await this.getResource('/api/v1/category');
-        const transformRes = res.map(this._transformCategory);
-        const ind = transformRes.findIndex(elem => elem.id === id);
-        return transformRes[ind];
     }
 
     _transformCategory = (category) => {
         return {
             id: category.id,
-            name:category.name,
-            childCategories: category.childCategories
+            name:category.name
         }
     }
 }
