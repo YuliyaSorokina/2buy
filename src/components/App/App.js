@@ -1,21 +1,24 @@
 import React, {Component} from 'react';
 import {Row, Col, Container} from 'reactstrap';
 import Header from '../Header/Header'
-import CategoriesList from "../CategoriesList/CategoriesList";
-
+import CategoryList from "../CategoriesList/CategoryList";
+import CategoryService from "../../services/CategoryService";
 
 import './App.css';
 
+
 export default class App extends Component {
 
-  render(){
-    return (
-        <div className="App">
+    categoryService = new CategoryService();
+
+    render() {
+        return (
+            <div className="App">
                 <Header/>
-                <CategoriesList/>
-        </div>
-    );
-  }
+                <CategoryList parentId={null}/>
+            </div>
+        );
+    }
 
 };
 
