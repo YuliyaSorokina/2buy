@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
-import {Row, Col, Container} from 'reactstrap';
 import Header from '../Header/Header'
-import CategoryList from "../CategoriesList/CategoryList";
+import CategoriesList from "../CategoriesList/CategoriesList";
 import CategoryService from "../../services/CategoryService";
+import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 
 import './App.css';
 
@@ -13,10 +13,18 @@ export default class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                <Header/>
-                <CategoryList parent={null}/>
-            </div>
+            <Router>
+                <div className="App">
+                    <Header/>
+                    <Route exact path="/home"><CategoriesList/></Route>
+                    <Route path='/home/:mainCategoryId' render={
+                        ({match}) =>
+                            <CategoriesList match={match}/>
+
+                    }/>
+
+                </div>
+            </Router>
         );
     }
 
