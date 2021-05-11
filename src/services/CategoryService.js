@@ -1,4 +1,5 @@
 export default class CategoryService {
+
     constructor() {
         this._apiBase = 'http://192.168.3.9:8080';
     }
@@ -13,13 +14,6 @@ export default class CategoryService {
 
     getCategories = async (id) => {
         const res = await this.getResource(`/api/v1/category/${id}`);
-        return res.map(this._transformCategory);
-    }
-
-    _transformCategory = (category) => {
-        return {
-            id: category.id,
-            name:category.name
-        }
+        return res;
     }
 }
