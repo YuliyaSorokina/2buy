@@ -22,7 +22,8 @@ export default class ProductService{
 
     getProduct = async (id) => {
         const res = await this.getResource(`/api/v1/product/${id}`);
-        return this._transformProduct(res);
+       // return this._transformProduct(res);
+        return res;
     }
 
     _transformProduct = (item)=>{
@@ -51,7 +52,7 @@ export default class ProductService{
             },
             "review": {
                 "comment": this.isSet(review.comment),
-                "rating": this.isSet(review.rating),
+                "rating": review.rating,
                 "favourite": this.isSet(review.favourite),
                 "reviewDate": this.isSet(review.reviewDate)
             }
