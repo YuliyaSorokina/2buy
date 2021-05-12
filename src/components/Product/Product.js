@@ -4,6 +4,8 @@ import ReviewService from "../../services/ReviewService";
 import {withRouter} from "react-router-dom";
 import {Button, Container, Form, Input} from "reactstrap";
 
+import './Product.css';
+
 
 class Product extends Component {
 
@@ -16,7 +18,8 @@ class Product extends Component {
         //     "rating": "",
         //     "favourite": false,
         //     "reviewDate": ""}
-        review: null
+        review: null,
+        edit: false
     }
 
     componentDidMount() {
@@ -37,7 +40,8 @@ class Product extends Component {
             reviewDate: review.reviewDate
         }
         this.setState({
-            review: newReview
+            review: newReview,
+            edit: true
         })
     }
 
@@ -50,17 +54,18 @@ class Product extends Component {
         this.reviewService.submitProductReview(obj)
             .then((item) => {
                 const {product, review} = item;
-                this.setState({product, review});
+                this.setState({product, review, edit: false});
             });
     }
 
     render() {
-        const {product, review} = this.state;
+        const {product, review, edit} = this.state;
         if (!product) {
             return (
                 <div>loading...</div>
             )
         }
+        const color = edit ? 'success' : 'secondary';
         return (
             <Container>
                 <Form onSubmit={this.onFormSubmit}>
@@ -74,7 +79,14 @@ class Product extends Component {
                         placeholder='Комментарий'
                         value={review?.comment}>
                     </Input>
-                    <Button type="submit">Сохранить</Button>
+                    <Button
+                        type="submit"
+                        className="submit-btn"
+                        color={color}
+                        disabled={!edit}
+                    >
+                        Сохранить
+                    </Button>
                 </Form>
             </Container>
         )
