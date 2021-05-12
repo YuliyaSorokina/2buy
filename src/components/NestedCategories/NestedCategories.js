@@ -1,13 +1,14 @@
 import React from 'react';
 import CategoriesList from "../CategoriesList/CategoriesList";
-import {withRouter} from "react-router-dom";
+import {withRouter} from 'react-router-dom';
 
-const NestedCategories =({location})=>{
+const NestedCategories =({match, location})=>{
 
         return(
             <>
-            <h2>{location.state.name}</h2>
-            <CategoriesList/>
+            {/*<h2>{location.state.name}</h2>*/}
+                    <CategoriesList/>
+
             </>
         )
 
