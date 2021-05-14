@@ -1,0 +1,12 @@
+.productForm{
+    max-width: 700px;
+    text-align: left;
+    margin: auto;
+}
+.productForm input{
+    margin: 15px 0;
+
+}
+.submit-btn{
+    margin:15px 0;
+}
