@@ -4,6 +4,8 @@ import ReviewService from "../../services/ReviewService";
 import FieldsProductService from "../../services/FieldsProductService";
 import {withRouter} from "react-router-dom";
 import {Button, Container, Form, Input} from "reactstrap";
+import AsyncSelect from 'react-select/async';
+import CategoryService from "../../services/CategoryService";
 
 
 import './ProductPage.css';
@@ -14,6 +16,7 @@ class ProductPage extends Component {
     productService = new ProductService();
     reviewService = new ReviewService();
     fieldsProductService = new FieldsProductService();
+    categoryService = new CategoryService();
 
     state = {
         product: {
@@ -29,22 +32,19 @@ class ProductPage extends Component {
             },
             barcode: {
                 id: '',
-                name: '',
-                barcodeType: {
-                    id: '',
-                    name: ''
-                }
+                name: ''
             }
         },
         review: {
             comment: '',
             rating: '',
-            favourite: '',
+            favourite: false,
             reviewDate: ''
         },
         add: false,
         edit: false,
-        manufacturers: []
+        //manufacturers: [],
+        categories: []
     }
 
     componentDidMount() {
@@ -56,8 +56,78 @@ class ProductPage extends Component {
                     const {product, review} = item;
                     this.setState({product, review});
                 })
+        } else {
+            this.categoryService.getCategories('3')
+                .then((categories) => {
+                    this.setState({
+                        categories: categories.childCategories
+                    });
+                })
         }
 
+    }
+
+    renderEmptyFields = () => {
+        const {product} = this.state;
+        const categoriesList = this.renderSelectOptions(this.state.categories);
+
+        const loadOptions = () => {
+            return this.fieldsProductService.getManufacturers()
+                .then((manufacturers) => {
+                    return manufacturers.map((item) => {
+                        return {
+                            value: item.id,
+                            label: item.name
+                        }
+                    })
+                })
+        }
+        return (
+            <>
+                <h4>Добавление продукта</h4>
+                <Input value={product.name} placeholder="Наименование" name="name"
+                       onChange={(e) => this.handleSetState(e, 'product')}/>
+                <Input value={product.barcode.name} placeholder="Штрихкод" name="name"
+                       onChange={(e) => this.handleSetNestedState(e, 'product', 'barcode')}/>
+                <Input type="select" placeholder="Категория" name="id"
+                       onChange={(e) => this.handleSetNestedState(e, 'product', 'category')}>
+                    {categoriesList}
+                </Input>
+                <AsyncSelect cacheOptions defaultOptions loadOptions={loadOptions}
+                             onChange={(e) => this.handleSetNestedState({
+                                 target: {
+                                     name: 'id',
+                                     value: e.value
+                                 }
+                             }, 'product', 'manufacturer')}/>
+
+            </>
+        )
+    }
+
+    renderSelectOptions = (arr) => {
+        return arr.map((item) => {
+            const {id, name} = item;
+            return (
+                <>
+                    <option key={id} value={id}>
+                        {name}
+                    </option>
+                </>
+            )
+        })
+    }
+
+    renderProduct = () => {
+        const {product} = this.state;
+        return (
+            <>
+                <h4>{product.name}</h4>
+                <p>Штрихкод: {product.barcode.name}</p>
+                <p>Категория: {product.category.name}</p>
+                <p>Производитель: {product.manufacturer.name}</p>
+            </>
+        )
     }
 
     handleSetState = (e, cat) => {
@@ -67,7 +137,23 @@ class ProductPage extends Component {
         const category = {...this.state[cat]};
         category[name] = value;
         this.setState({[cat]: category, edit: true});
-        console.log(this.state[cat]);
+    }
+
+    handleSetNestedState = (e, cat, field) => {
+        const target = e.target;
+        const value = target.value;
+        const name = target.name;
+        const category = {...this.state[cat]};
+        const categoryFieldObject = {...category[field]};
+        categoryFieldObject[name] = value;
+        this.setState({
+            [cat]: {
+                ...this.state[cat],
+                [field]: categoryFieldObject
+            },
+            edit: true
+        })
+
     }
 
     onFormSubmit = (e) => {
@@ -81,25 +167,6 @@ class ProductPage extends Component {
                 const {product, review} = item;
                 this.setState({product, review, edit: false});
             });
-    }
-
-    renderEmptyFields = () => {
-
-        return (
-            <span></span>
-        )
-    }
-
-    renderProduct = () => {
-        const {product} = this.state;
-        return (
-            <>
-                <h4>{product.name}</h4>
-                <p>Штрихкод: {product.barcode.name}</p>
-                <p>Категория: {product.category.name}</p>
-                <p>Производитель: {product.manufacturer.name}</p>
-            </>
-        )
     }
 
 
