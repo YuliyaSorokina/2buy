@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import ReviewService from "../../services/ReviewService";
+import {Link, withRouter} from "react-router-dom";
 
 
-export default class SearchPage extends Component {
+class SearchPage extends Component {
 
     reviewService = new ReviewService();
 
@@ -17,12 +18,13 @@ export default class SearchPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.searchBarcode !== prevProps.searchBarcode){
+        if (this.props.searchBarcode !== prevProps.searchBarcode) {
             this.setState({who: 'componentDidUpdate'});
             this.updateResult();
         }
     }
-    updateResult =()=>{
+
+    updateResult = () => {
         const {searchBarcode} = this.props;
         this.reviewService.getReviewByBarcode(searchBarcode)
             .then((searchResult) => {
@@ -31,18 +33,21 @@ export default class SearchPage extends Component {
     }
 
     renderSearchResult = (searchResult) => {
-        return searchResult.name
+        const {id, name} = searchResult;
+        return <Link to={`/product/${id}/`}>{name}</Link>
     }
 
     render() {
-        if (!this.state.searchResult){
+        if (!this.state.searchResult) {
             return <p>Ничего не найдено</p>
         }
         const item = this.renderSearchResult(this.state.searchResult);
         return (
             <div>
-            <p>{item}</p>
+                <p>{item}</p>
             </div>
         )
     }
 }
+
+export default withRouter(SearchPage)

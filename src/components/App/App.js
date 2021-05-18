@@ -39,8 +39,9 @@ export default class App extends Component {
                 <Route exact path="/"><CategoriesList/></Route>
                 <Route exact path='/:id/'><NestedCategories/></Route>
                 <Route exact path='/product/add'><Product add={true}/></Route>
+                <Route exact path='/product/:id'><Product add={false}/></Route>
                 <Route exact path='/:mainCategoryId/:id/'><CategoryPage/></Route>
-                <Route exact path='/:mainCategoryId/:childCategoryId/:id'><Product add={false}/></Route>
+                {/*<Route exact path='/:mainCategoryId/:childCategoryId/:id'><Product add={false}/></Route>*/}
             </Switch>;
         return (
             <Router>

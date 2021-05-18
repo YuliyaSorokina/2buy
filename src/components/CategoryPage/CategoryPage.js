@@ -31,7 +31,8 @@ class CategoryPage extends Component {
                 const {id, name} = product;
                 return (
                     <li key={id}>
-                        <Link to={`${match.url}${id}/`}>{name}</Link>
+                        {/*<Link to={`${match.url}${id}/`}>{name}</Link>*/}
+                        <Link to={`/product/${id}/`}>{name}</Link>
                     </li>
                 )
             }
@@ -39,14 +40,13 @@ class CategoryPage extends Component {
     }
 
     render() {
-        if (!this.state.reviews)
-            return <p>Категория пуста</p>
-        const reviewsArr = this.renderReviews(this.state.reviews);
+        const reviewsArr = this.state.reviews.length === 0
+            ? <p>Категория пуста</p>
+            : this.renderReviews(this.state.reviews);
         return (
             <Container>
                 <h4>{this.state.name}</h4>
                 <ul>{reviewsArr}</ul>
-
             </Container>
         )
     }
