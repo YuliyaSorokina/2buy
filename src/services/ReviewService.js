@@ -32,4 +32,9 @@ export default class ReviewService{
         const res = await this.getResource(`/api/v1/review?categoryId=${categoryId}`);
         return res;
     }
+
+    getReviewByBarcode = async (barcode) => {
+        const res = await this.getResource(`/api/v1/review/${barcode}`);
+        return res;
+    }
 }

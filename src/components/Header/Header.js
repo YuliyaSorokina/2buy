@@ -1,11 +1,11 @@
 import React from 'react';
-import {Row, Col, Container} from 'reactstrap';
+import {Container, Row} from 'reactstrap';
 import Logo from "../Logo/Logo";
 import SearchPanel from "../SearchPanel/SearchPanel";
 
 import './Header.css';
 
-const Header = () => {
+const Header = ({onUpdateSearch}) => {
     return (
         <div className="header">
             <Container>
@@ -25,7 +25,7 @@ const Header = () => {
                 </nav>
             </div>
             <Row>
-                <SearchPanel/>
+                <SearchPanel onUpdateSearch={onUpdateSearch}/>
             </Row>
             </Container>
         </div>
