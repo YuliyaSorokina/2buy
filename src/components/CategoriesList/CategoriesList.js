@@ -1,26 +1,32 @@
 import React, {Component} from 'react';
 import CategoryService from "../../services/CategoryService";
 import {Container} from "reactstrap";
-import {Link} from 'react-router-dom';
-import {withRouter} from 'react-router-dom';
+import {Link, withRouter} from 'react-router-dom';
 
 import './CategoriesList.css';
+
 
 class CategoriesList extends Component {
 
     categoryService = new CategoryService();
 
     state = {
-        categories: null
+        categories: null,
+        title: 'Все категории'
     }
 
     componentDidMount() {
         const {match} = this.props;
-        const id = match.params.id ? match.params.id : '';
-        this.categoryService.getCategories(id)
-            .then((categories) => {
-                this.setState({categories})
-            });
+        if (match.params.id) {
+            this.categoryService.getCategoryById(match.params.id)
+                .then((category) => this.setState({
+                    categories: category.childCategories,
+                    title: category.name
+                }))
+        } else {
+            this.categoryService.getAllCategories()
+                .then((categories) => this.setState({categories}))
+        }
     }
 
     renderCategoryItem(arr) {
@@ -29,20 +35,14 @@ class CategoriesList extends Component {
             const {id, name} = item;
             return (
                 <li key={id}>
-                    {/*<Link to={`${match.url}${id}/`}>{name}</Link>*/}
-                    <Link to={{
-                        pathname: `${match.url}${id}/`,
-                        state: {
-                            name: name
-                        }
-                    }}>{name}</Link>
+                    <Link to={`${match.url}${id}/`}>{name}</Link>
                 </li>
             )
         })
     }
 
     render() {
-        const {categories} = this.state;
+        const {categories, title} = this.state;
         if (!categories) {
             return (
                 <div>loading...</div>
@@ -51,9 +51,11 @@ class CategoriesList extends Component {
         const items = this.renderCategoryItem(categories);
         return (
 
-            <Container>
-                <ul>{items}</ul>
-            </Container>
+                <Container>
+                    <h4>{title}</h4>
+                    <ul>{items}</ul>
+                </Container>
+
         )
     }
 }

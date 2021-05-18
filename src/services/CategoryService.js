@@ -12,7 +12,12 @@ export default class CategoryService {
         return await res.json();
     }
 
-    getCategories = async (id) => {
+    getAllCategories = async () => {
+        const res = await this.getResource(`/api/v1/category/`);
+        return res;
+    }
+
+    getCategoryById = async (id) => {
         const res = await this.getResource(`/api/v1/category/${id}`);
         return res;
     }

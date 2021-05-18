@@ -57,7 +57,7 @@ class ProductPage extends Component {
                     this.setState({product, review});
                 })
         } else {
-            this.categoryService.getCategories('3')
+            this.categoryService.getAllCategories('3')
                 .then((categories) => {
                     this.setState({
                         categories: categories.childCategories

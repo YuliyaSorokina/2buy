@@ -15,8 +15,21 @@ export default class ReviewService{
         return await res.json();
     }
 
+    getResource = async (url) => {
+        const res = await fetch(`${this._apiBase}${url}`);
+        if (!res.ok) {
+            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+        }
+        return await res.json();
+    }
+
     submitProductReview = async (item) => {
         const res = await this.postResource(`/api/v1/review`, item);
+        return res;
+    }
+
+    getReviewsByCategory = async (categoryId) => {
+        const res = await this.getResource(`/api/v1/review?categoryId=${categoryId}`);
         return res;
     }
 }
