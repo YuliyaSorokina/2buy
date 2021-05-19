@@ -5,8 +5,6 @@ import NestedCategories from "../NestedCategories/NestedCategories";
 import RootCategories from "../RootCategories/RootCategories";
 import CategoryPage from '../CategoryPage/CategoryPage'
 import Product from "../ProductPage/ProductPage";
-import CategoryService from "../../services/CategoryService";
-import ReviewService from "../../services/ReviewService";
 import SearchPage from "../SearchPage/SearchPage";
 
 
@@ -15,25 +13,21 @@ import './App.css';
 
 export default class App extends Component {
 
-    categoryService = new CategoryService();
-    reviewService = new ReviewService();
-
     state = {
         searchBarcode: '',
-        isSearch: false
+        isFound: true
     }
-
 
     onUpdateSearch = (searchBarcode) => {
-        const isSearch = !!searchBarcode;
-        this.setState({searchBarcode, isSearch});
+        this.setState({searchBarcode});
+        const isFound = !searchBarcode;
+        this.setState({isFound});
     }
 
-
     render() {
-        const {isSearch, searchBarcode} = this.state;
-        const content = isSearch
-            ? <SearchPage searchBarcode={searchBarcode}/>
+        const {searchBarcode} = this.state;
+        const content = searchBarcode
+            ? <SearchPage searchBarcode={searchBarcode} onUpdateSearch={this.onUpdateSearch}/>
             : <Switch>
                 <Route exact path="/"><RootCategories/></Route>
                 <Route exact path='/:id/' render={
@@ -45,10 +39,11 @@ export default class App extends Component {
                 <Route exact path='/product/:id'><Product add={false}/></Route>
                 <Route exact path='/:mainCategoryId/:id/'><CategoryPage/></Route>
             </Switch>;
+
         return (
             <Router>
                 <div className="App">
-                    <Header onUpdateSearch={this.onUpdateSearch}/>
+                    <Header onUpdateSearch={this.onUpdateSearch} isFound={this.state.isFound}/>
                     {content}
                 </div>
             </Router>

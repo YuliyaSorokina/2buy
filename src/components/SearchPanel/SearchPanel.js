@@ -10,6 +10,13 @@ export default class SearchPanel extends Component {
         barcode: ''
     }
 
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if ((this.props.isFound !== prevProps.isFound) && this.props.isFound) {
+            this.setState({barcode: ''})
+        }
+
+    }
+
     onUpdateSearch = (e) => {
         const barcode = e.target.value;
         this.setState({barcode});

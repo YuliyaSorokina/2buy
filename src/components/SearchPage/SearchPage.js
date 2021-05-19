@@ -34,7 +34,8 @@ class SearchPage extends Component {
 
     renderSearchResult = (searchResult) => {
         const {id, name} = searchResult;
-        return <Link to={`/product/${id}/`}>{name}</Link>
+        return <Link to={`/product/${id}/`}
+        onClick={()=>this.props.onUpdateSearch('')}>{name}</Link>
     }
 
     render() {

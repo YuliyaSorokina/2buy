@@ -5,7 +5,7 @@ import SearchPanel from "../SearchPanel/SearchPanel";
 
 import './Header.css';
 
-const Header = ({onUpdateSearch}) => {
+const Header = ({onUpdateSearch, isFound}) => {
     return (
         <div className="header">
             <Container>
@@ -25,7 +25,7 @@ const Header = ({onUpdateSearch}) => {
                 </nav>
             </div>
             <Row>
-                <SearchPanel onUpdateSearch={onUpdateSearch}/>
+                <SearchPanel onUpdateSearch={onUpdateSearch} isFound={isFound}/>
             </Row>
             </Container>
         </div>
