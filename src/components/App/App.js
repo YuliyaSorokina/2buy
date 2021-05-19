@@ -1,8 +1,8 @@
 import React, {Component} from 'react';
 import Header from '../Header/Header'
-import CategoriesList from "../CategoriesList/CategoriesList";
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import NestedCategories from "../NestedCategories/NestedCategories";
+import RootCategories from "../RootCategories/RootCategories";
 import CategoryPage from '../CategoryPage/CategoryPage'
 import Product from "../ProductPage/ProductPage";
 import CategoryService from "../../services/CategoryService";
@@ -23,6 +23,7 @@ export default class App extends Component {
         isSearch: false
     }
 
+
     onUpdateSearch = (searchBarcode) => {
         const isSearch = !!searchBarcode;
         this.setState({searchBarcode, isSearch});
@@ -34,12 +35,15 @@ export default class App extends Component {
         const content = isSearch
             ? <SearchPage searchBarcode={searchBarcode}/>
             : <Switch>
-                <Route exact path="/"><CategoriesList/></Route>
-                <Route exact path='/:id/'><NestedCategories/></Route>
+                <Route exact path="/"><RootCategories/></Route>
+                <Route exact path='/:id/' render={
+                    ({match}) => {
+                        const {id}=match.params;
+                        return <NestedCategories catId={id}/>
+                }}/>
                 <Route exact path='/product/add'><Product add={true}/></Route>
                 <Route exact path='/product/:id'><Product add={false}/></Route>
                 <Route exact path='/:mainCategoryId/:id/'><CategoryPage/></Route>
-                {/*<Route exact path='/:mainCategoryId/:childCategoryId/:id'><Product add={false}/></Route>*/}
             </Switch>;
         return (
             <Router>
