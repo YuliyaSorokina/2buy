@@ -11,9 +11,13 @@ export default class FieldsProductService {
         return await res.json();
     }
 
-
     getManufacturers = async () =>{
         const res = await this.getResource(`/api/v1/misc/manufacturer`);
+        return res;
+    }
+
+    getAllAssignableCategories = async () => {
+        const res = await this.getResource(`/api/v1/misc/category`);
         return res;
     }
 }

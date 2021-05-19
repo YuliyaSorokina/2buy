@@ -62,13 +62,10 @@ class ProductPage extends Component {
                     this.setState({product, review});
                 })
         } else {
-            this.categoryService.getCategoryById('3')
+            this.fieldsProductService.getAllAssignableCategories()
                 .then((categories) => {
-                    this.setState({
-                        categories: categories.childCategories
-                    });
-                }
-                )
+                    this.setState({categories});
+                })
         }
 
     }
