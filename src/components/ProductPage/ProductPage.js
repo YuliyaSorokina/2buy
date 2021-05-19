@@ -24,7 +24,12 @@ class ProductPage extends Component {
             name: '',
             category: {
                 id: '',
-                name: ''
+                name: '',
+                parentCategory: {
+                    id: '',
+                    name: ''
+                },
+                childCategories: []
             },
             manufacturer: {
                 id: '',
@@ -57,12 +62,13 @@ class ProductPage extends Component {
                     this.setState({product, review});
                 })
         } else {
-            this.categoryService.getAllCategories('3')
+            this.categoryService.getCategoryById('3')
                 .then((categories) => {
                     this.setState({
                         categories: categories.childCategories
                     });
-                })
+                }
+                )
         }
 
     }

@@ -20,8 +20,7 @@ export default class App extends Component {
 
     state = {
         searchBarcode: '',
-        isSearch: false,
-        category: null
+        isSearch: false
     }
 
     onUpdateSearch = (searchBarcode) => {
@@ -31,8 +30,7 @@ export default class App extends Component {
 
 
     render() {
-        const {isSearch, searchBarcode, category} = this.state;
-        console.log(category);
+        const {isSearch, searchBarcode} = this.state;
         const content = isSearch
             ? <SearchPage searchBarcode={searchBarcode}/>
             : <Switch>
