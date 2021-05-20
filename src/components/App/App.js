@@ -15,45 +15,52 @@ import './App.css';
 export default class App extends Component {
 
     state = {
-        searchBarcode: '',
+        term: '',
         isFound: true
     }
 
-    onUpdateSearch = (searchBarcode) => {
-        this.setState({searchBarcode});
-        const isFound = !searchBarcode;
+    onUpdateSearch = (term) => {
+        this.setState({term});
+        const isFound = !term;
         this.setState({isFound});
     }
 
     render() {
-        const {searchBarcode} = this.state;
-        const search= searchBarcode ? <SearchPage searchBarcode={searchBarcode} onUpdateSearch={this.onUpdateSearch}/> : '';
+        const {term} = this.state;
+        const content = term ? <SearchPage term={term} onUpdateSearch={this.onUpdateSearch}/> : <View/>;
         return (
             <Router>
                 <div className="App">
                     <Header onUpdateSearch={this.onUpdateSearch} isFound={this.state.isFound}/>
-                    {search}
-                    <Switch>
-                        <Route exact path="/"><RootCategories/></Route>
-                        <Route exact path='/:id/' render={
-                            ({match}) => {
-                                const {id} = match.params;
-                                return <NestedCategories catId={id}/>
-                            }}/>
-                        <Route exact path='/product/add'><Product add={true}/></Route>
-                        <Route exact path='/product/id/:id'><Product add={false}/></Route>
-                        <Route exact path='/product/barcode/:barcode'><Product add={false}/></Route>
-                        <Route exact path='/search/barcode/'><BarcodeSearch/></Route>
-                        <Route exact path='/:mainCategoryId/:id/'><CategoryPage/></Route>
-                    </Switch>
-                    <Link to='/search/barcode' className='btn-bottom'>
-                        <Button color="primary">Отсканировать штрихкод</Button>
-                    </Link>
+                    {content}
                 </div>
             </Router>
         );
     }
+}
 
-};
+const View = () => {
+    return (
+        <>
+            <Switch>
+                <Route exact path="/"><RootCategories/></Route>
+                <Route exact path='/:id/' render={
+                    ({match}) => {
+                        const {id} = match.params;
+                        return <NestedCategories catId={id}/>
+                    }}/>
+                <Route exact path='/product/add'><Product add={true}/></Route>
+                <Route exact path='/product/id/:id'><Product add={false}/></Route>
+                <Route exact path='/product/barcode/:barcode'><Product add={false}/></Route>
+                <Route exact path='/search/barcode/'><BarcodeSearch/></Route>
+                <Route exact path='/:mainCategoryId/:id/'><CategoryPage/></Route>
+            </Switch>
+            <Link to='/search/barcode' className='btn-bottom'>
+                <Button color="primary">Отсканировать штрихкод</Button>
+            </Link>
+        </>
+    )
+
+}
 
 

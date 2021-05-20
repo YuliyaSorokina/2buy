@@ -24,17 +24,17 @@ export default class ReviewService{
     }
 
     submitProductReview = async (item) => {
-        const res = await this.postResource(`/api/v1/review`, item);
-        return res;
+        return await this.postResource(`/api/v1/review`, item);
     }
 
     getReviewsByCategory = async (categoryId) => {
-        const res = await this.getResource(`/api/v1/review?categoryId=${categoryId}`);
-        return res;
+        return await this.getResource(`/api/v1/review?categoryId=${categoryId}`);
     }
 
     getReviewByBarcode = async (barcode) => {
-        const res = await this.getResource(`/api/v1/review/${barcode}`);
-        return res;
+        return await this.getResource(`/api/v1/review/${barcode}`);
+    }
+    getReviewsByName = async (name) => {
+        return await this.getResource(`/api/v1/review?name=${name}`);
     }
 }

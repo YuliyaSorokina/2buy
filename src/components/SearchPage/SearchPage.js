@@ -10,7 +10,7 @@ class SearchPage extends Component {
     reviewService = new ReviewService();
 
     state = {
-        searchResult: null
+        searchResult: []
     }
 
     componentDidMount() {
@@ -19,33 +19,40 @@ class SearchPage extends Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        if (this.props.searchBarcode !== prevProps.searchBarcode) {
+        if (this.props.term !== prevProps.term) {
             this.updateResult();
         }
     }
 
     updateResult = () => {
-        const {searchBarcode} = this.props;
-        this.reviewService.getReviewByBarcode(searchBarcode)
+        const {term} = this.props;
+        this.reviewService.getReviewsByName(term)
             .then((searchResult) => {
-                this.setState({searchResult: searchResult.product})
+                this.setState({searchResult: searchResult.content});
             })
     }
 
-    renderSearchResult = (searchResult) => {
-        const {id, name} = searchResult;
-        return <Link to={`/product/id/${id}/`}
-                     onClick={() => this.props.onUpdateSearch('')}>{name}</Link>
+    renderCategoryItem = () => {
+        const {searchResult} = this.state;
+        return searchResult.map((item) => {
+            const {id, name, manufacturer} = item.product;
+            return (
+                <li key={id}>
+                    <Link to={`/product/id/${id}/`}
+                          onClick={() => this.props.onUpdateSearch('')}>{name} ({manufacturer.name})</Link>
+                </li>
+            )
+        })
     }
 
     render() {
-        if (!this.state.searchResult) {
+        if (this.state.searchResult.length===0) {
             return <p>Ничего не найдено</p>
         }
-        const item = this.renderSearchResult(this.state.searchResult);
+        const item = this.renderCategoryItem();
         return (
             <div className='search-block'>
-                <p>{item}</p>
+                <ul>{item}</ul>
             </div>
         )
     }
