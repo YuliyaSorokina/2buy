@@ -2,6 +2,7 @@ import React from 'react';
 import {Container, Row} from 'reactstrap';
 import Logo from "../Logo/Logo";
 import SearchPanel from "../SearchPanel/SearchPanel";
+import {Link} from 'react-router-dom';
 
 import './Header.css';
 
@@ -16,10 +17,10 @@ const Header = ({onUpdateSearch, isFound}) => {
                 <nav className="header__menu">
                     <ul>
                         <li>
-                            <a href="#">Мои товары</a>
+                            <Link to="/">Мои товары</Link>
                         </li>
                         <li>
-                            <a href="#">Выйти</a>
+                            <Link to="/">Выйти</Link>
                         </li>
                     </ul>
                 </nav>
