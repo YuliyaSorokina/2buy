@@ -56,18 +56,32 @@ class ProductPage extends Component {
         const {match, add} = this.props;
         this.setState({add});
         if (!add) {
-            this.productService.getProduct(match.params.id)
-                .then((item) => {
-                    const {product, review} = item;
-                    this.setState({product, review});
-                })
-        } else {
+            const {id, barcode} = match.params;
+            if (id) this.getProductById(id)
+            else if (barcode)
+                this.getReviewByBarcode(barcode)
+
+        } else
             this.fieldsProductService.getAllAssignableCategories()
                 .then((categories) => {
                     this.setState({categories});
                 })
-        }
+    }
 
+    getProductById = (id) => {
+        this.productService.getProduct(id)
+            .then((item) => {
+                const {product, review} = item;
+                this.setState({product, review});
+            })
+    }
+
+    getReviewByBarcode = (barcode) => {
+        this.reviewService.getReviewByBarcode(barcode)
+            .then((item) => {
+                const {product, review} = item;
+                this.setState({product, review});
+            })
     }
 
     renderEmptyFields = () => {

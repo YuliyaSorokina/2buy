@@ -25,14 +25,12 @@ class CategoryPage extends Component {
     }
 
     renderReviews = (arr) => {
-        let {match} = this.props;
         return arr.map((item) => {
                 const {product} = item;
                 const {id, name} = product;
                 return (
                     <li key={id}>
-                        {/*<Link to={`${match.url}${id}/`}>{name}</Link>*/}
-                        <Link to={`/product/${id}/`}>{name}</Link>
+                        <Link to={`/product/id/${id}/`}>{name}</Link>
                     </li>
                 )
             }

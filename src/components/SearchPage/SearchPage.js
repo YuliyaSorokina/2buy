@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import ReviewService from "../../services/ReviewService";
 import {Link, withRouter} from "react-router-dom";
 
+import './SearchPage.css'
+
 
 class SearchPage extends Component {
 
@@ -12,14 +14,12 @@ class SearchPage extends Component {
     }
 
     componentDidMount() {
-        this.setState({who: 'componentDidMount'});
         this.updateResult();
 
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.props.searchBarcode !== prevProps.searchBarcode) {
-            this.setState({who: 'componentDidUpdate'});
             this.updateResult();
         }
     }
@@ -34,8 +34,8 @@ class SearchPage extends Component {
 
     renderSearchResult = (searchResult) => {
         const {id, name} = searchResult;
-        return <Link to={`/product/${id}/`}
-        onClick={()=>this.props.onUpdateSearch('')}>{name}</Link>
+        return <Link to={`/product/id/${id}/`}
+                     onClick={() => this.props.onUpdateSearch('')}>{name}</Link>
     }
 
     render() {
@@ -44,7 +44,7 @@ class SearchPage extends Component {
         }
         const item = this.renderSearchResult(this.state.searchResult);
         return (
-            <div>
+            <div className='search-block'>
                 <p>{item}</p>
             </div>
         )
