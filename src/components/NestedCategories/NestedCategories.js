@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import CategoriesList from "../CategoriesList/CategoriesList";
 import CategoryService from "../../services/CategoryService";
-import CategoryPage from "../CategoryPage/CategoryPage";
+import CategoryPage from "../../pages/CategoryPage/CategoryPage";
 
 export default class NestedCategories extends Component {
 

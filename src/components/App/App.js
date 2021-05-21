@@ -3,9 +3,9 @@ import Header from '../Header/Header'
 import {BrowserRouter as Router, Link, Route, Switch} from 'react-router-dom';
 import NestedCategories from "../NestedCategories/NestedCategories";
 import RootCategories from "../RootCategories/RootCategories";
-import CategoryPage from '../CategoryPage/CategoryPage'
-import Product from "../ProductPage/ProductPage";
-import SearchPage from "../SearchPage/SearchPage";
+import CategoryPage from '../../pages/CategoryPage/CategoryPage'
+import Product from "../../pages/ProductPage/ProductPage";
+import SearchPage from "../../pages/SearchPage/SearchPage";
 import {Button} from "reactstrap";
 import BarcodeSearch from "../BarcodeSearch/BarcodeSearch";
 
