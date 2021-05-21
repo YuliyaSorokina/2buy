@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import ProductService from "../../services/ProductService";
 import ReviewService from "../../services/ReviewService";
 import FieldsProductService from "../../services/FieldsProductService";
-import {withRouter} from "react-router-dom";
+import {Redirect, withRouter} from "react-router-dom";
 import {Button, Container, Form, Input} from "reactstrap";
 import AsyncSelect from 'react-select/async';
 import CategoryService from "../../services/CategoryService";
@@ -48,14 +48,29 @@ class ProductPage extends Component {
         },
         add: false,
         edit: false,
+        redirect: false,
         //manufacturers: [],
         categories: []
     }
 
     componentDidMount() {
-        const {match, add} = this.props;
+        const {add} = this.props;
         this.setState({add});
+        this.updateProduct();
+
+    }
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.state.add !== prevState.add)
+            this.updateProduct();
+
+    }
+
+    updateProduct = () => {
+        const {match} = this.props;
+        const {add} = this.state;
         if (!add) {
+            this.setState({redirect: false});
             const {id, barcode} = match.params;
             if (id) this.getProductById(id)
             else if (barcode)
@@ -183,12 +198,18 @@ class ProductPage extends Component {
             .then((item) => {
                 const {product, review} = item;
                 this.setState({product, review, edit: false});
+                if (this.state.add) {
+                    this.setState({add: false, redirect: true})
+                }
+
             });
     }
 
 
     render() {
-        const {product, review, edit, add} = this.state;
+        const {product, review, edit, add, redirect} = this.state;
+        if (redirect)
+            return <Redirect to={`/product/id/${product.id}`}/>;
         if (!add && !product.name) {
             return (
                 <div>loading...</div>
