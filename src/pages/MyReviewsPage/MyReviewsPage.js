@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
 import {withRouter} from "react-router-dom";
-import CategoryService from "../../services/CategoryService";
 import ReviewService from "../../services/ReviewService";
 import ReviewsList from "../../components/ReviewsList/ReviewsList";
 
-class CategoryPage extends Component {
+class MyReviewsPage extends Component {
 
     state = {
         name: '',
@@ -15,14 +14,12 @@ class CategoryPage extends Component {
     }
 
     componentDidMount() {
-        CategoryService.getCategoryById(this.props.match.params.id)
-            .then((category) => this.setState({name: category.name}))
         this.loadContent();
     }
 
     loadContent = () => {
         const {limit, offset} = this.state;
-        ReviewService.getReviewsByCategory(this.props.match.params.id, limit, offset)
+        ReviewService.getAllReviews(limit, offset)
             .then((reviews) => this.setState({
                     reviews: [...this.state.reviews, ...reviews.content],
                     offset: offset + limit,
@@ -39,4 +36,4 @@ class CategoryPage extends Component {
     }
 }
 
-export default withRouter(CategoryPage);
+export default withRouter(MyReviewsPage);

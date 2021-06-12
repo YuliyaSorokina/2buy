@@ -7,8 +7,6 @@ import './SearchPage.css'
 
 class SearchPage extends Component {
 
-    reviewService = new ReviewService();
-
     state = {
         searchResult: []
     }
@@ -26,7 +24,7 @@ class SearchPage extends Component {
 
     updateResult = () => {
         const {term} = this.props;
-        this.reviewService.getReviewsByName(term)
+        ReviewService.getReviewsByName(term)
             .then((searchResult) => {
                 this.setState({searchResult: searchResult.content});
             })

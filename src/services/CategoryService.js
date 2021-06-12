@@ -1,24 +1,13 @@
-export default class CategoryService {
+import FetchService from "./FetchService";
 
-    constructor() {
-        this._apiBase = 'http://192.168.3.9:8080';
-    }
-
-    getResource = async (url) => {
-        const res = await fetch(`${this._apiBase}${url}`);
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`);
-        }
-        return await res.json();
-    }
+class CategoryService {
 
     getAllCategories = async () => {
-        const res = await this.getResource(`/api/v1/category/`);
-        return res;
+        return await FetchService.handleFetch(`/category/`);
     }
 
     getCategoryById = async (id) => {
-        const res = await this.getResource(`/api/v1/category/${id}`);
-        return res;
+        return await FetchService.handleFetch(`/category/${id}`);
     }
 }
+export default new CategoryService();

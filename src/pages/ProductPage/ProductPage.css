@@ -1,12 +1,30 @@
 .productForm{
     max-width: 700px;
-    text-align: left;
-    margin: auto;
 }
-.productForm input{
+.productForm > input, .productForm select{
     margin: 15px 0;
 
 }
+.barcode_input{
+    padding: 2px 4px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.barcode_input-base{
+    margin-left: 10px;
+    flex: 1;
+}
+.barcode_input-icon{
+    padding: 10px;
+}
+
+.barcode_input-divider{
+    height: 28px;
+    margin: 4px;
+}
+
 .submit-btn{
     margin:15px 0;
 }

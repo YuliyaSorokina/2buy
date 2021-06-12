@@ -4,19 +4,16 @@ import ReviewService from "../../services/ReviewService";
 import FieldsProductService from "../../services/FieldsProductService";
 import {Redirect, withRouter} from "react-router-dom";
 import {Button, Container, Form, Input} from "reactstrap";
-import AsyncSelect from 'react-select/async';
-import CategoryService from "../../services/CategoryService";
-
+import {AutocompleteCreatable, AutocompleteGrouped} from "../../components/Autocomplete/Autocomplete";
+import IconButton from '@material-ui/core/IconButton';
+import {OutlinedInput, SvgIcon} from "@material-ui/core";
+import {ReactComponent as BarcodeIcon} from '../../barcode.svg'
+import ScanBarcode from "../../components/ScanBarcode/ScanBarcode";
+import InputAdornment from '@material-ui/core/InputAdornment';
 
 import './ProductPage.css';
 
-
 class ProductPage extends Component {
-
-    productService = new ProductService();
-    reviewService = new ReviewService();
-    fieldsProductService = new FieldsProductService();
-    categoryService = new CategoryService();
 
     state = {
         product: {
@@ -49,21 +46,27 @@ class ProductPage extends Component {
         add: false,
         edit: false,
         redirect: false,
-        //manufacturers: [],
-        categories: []
+        manufacturers: [],
+        categories: [],
+        scanBarcode: false
     }
 
     componentDidMount() {
         const {add} = this.props;
+        if (add) {
+            const urlParams = new URLSearchParams(this.props.location.search)
+            const barcode = urlParams.get('barcode')
+            if (barcode) {
+                this.handleSetState({id: null, name: barcode}, 'product', 'barcode');
+            }
+        }
         this.setState({add});
         this.updateProduct();
-
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
         if (this.state.add !== prevState.add)
             this.updateProduct();
-
     }
 
     updateProduct = () => {
@@ -72,19 +75,22 @@ class ProductPage extends Component {
         if (!add) {
             this.setState({redirect: false});
             const {id, barcode} = match.params;
-            if (id) this.getProductById(id)
+            if (id)
+                this.getProductById(id)
             else if (barcode)
                 this.getReviewByBarcode(barcode)
-
-        } else
-            this.fieldsProductService.getAllAssignableCategories()
+        } else {
+            FieldsProductService.getAllAssignableCategories()
                 .then((categories) => {
                     this.setState({categories});
                 })
+            FieldsProductService.getManufacturers()
+                .then((manufacturers) => this.setState({manufacturers}))
+        }
     }
 
     getProductById = (id) => {
-        this.productService.getProduct(id)
+        ProductService.getProduct(id)
             .then((item) => {
                 const {product, review} = item;
                 this.setState({product, review});
@@ -92,7 +98,7 @@ class ProductPage extends Component {
     }
 
     getReviewByBarcode = (barcode) => {
-        this.reviewService.getReviewByBarcode(barcode)
+        ReviewService.getReviewByBarcode(barcode)
             .then((item) => {
                 const {product, review} = item;
                 this.setState({product, review});
@@ -101,56 +107,49 @@ class ProductPage extends Component {
 
     renderEmptyFields = () => {
         const {product} = this.state;
-        const categoriesList = this.renderSelectOptions(this.state.categories);
-
-        const loadOptions = () => {
-            return this.fieldsProductService.getManufacturers()
-                .then((manufacturers) => {
-                    return manufacturers.map((item) => {
-                        return {
-                            value: item.id,
-                            label: item.name
-                        }
-                    })
-                })
-        }
         return (
             <>
                 <h4>Добавление продукта</h4>
                 <Input value={product.name} placeholder="Наименование" name="name"
-                       onChange={(e) => this.handleSetState(e, 'product')}/>
-                <Input value={product.barcode.name} placeholder="Штрихкод" name="name"
-                       onChange={(e) => this.handleSetNestedState(e, 'product', 'barcode')}/>
-                <Input type="select" placeholder="Категория" name="id"
-                       onChange={(e) => this.handleSetNestedState(e, 'product', 'category')}>
-                    {categoriesList}
-                </Input>
-                <AsyncSelect cacheOptions defaultOptions loadOptions={loadOptions}
-                             onChange={(e) => this.handleSetNestedState({
-                                 target: {
-                                     name: 'id',
-                                     value: e.value
-                                 }
-                             }, 'product', 'manufacturer')}/>
+                       onChange={(e) => this.handleSetState(e.target.value, 'product', 'name')}/>
 
+                <OutlinedInput
+                    value={product.barcode.name}
+                    className="barcode_input"
+                    placeholder="Штрихкод"
+                    name="name"
+                    onChange={(e) => {
+                        this.handleSetState({id: null, name: e.target.value}, 'product', 'barcode');
+                    }}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton aria-label="delete"
+                                        className="barcode_input-icon"
+                                        onClick={this.onScanBarcode}>
+                                <SvgIcon component={BarcodeIcon} viewBox="0 0 600 476.6"/>
+                            </IconButton>
+
+                        </InputAdornment>
+                    }
+                />
+
+
+                <AutocompleteGrouped array={this.state.categories}
+                                     handleSetNestedState={this.handleSetNestedState}
+                                     label="Выберите категорию"
+                                     params={Array.of('product', 'category')}
+
+                />
+                <AutocompleteCreatable array={this.state.manufacturers}
+                                       handleSetNestedState={this.handleSetState}
+                                       label="Выберите производителя"
+                                       params={Array.of('product', 'manufacturer')}
+                />
             </>
         )
     }
 
-    renderSelectOptions = (arr) => {
-        return arr.map((item) => {
-            const {id, name} = item;
-            return (
-                <>
-                    <option key={id} value={id}>
-                        {name}
-                    </option>
-                </>
-            )
-        })
-    }
-
-    renderProduct = () => {
+    renderExistingProduct = () => {
         const {product} = this.state;
         return (
             <>
@@ -162,30 +161,29 @@ class ProductPage extends Component {
         )
     }
 
-    handleSetState = (e, cat) => {
-        const target = e.target;
-        const value = target.value;
-        const name = target.name;
+    handleSetState = (value, cat, field) => {
+        const target = value;
         const category = {...this.state[cat]};
-        category[name] = value;
-        this.setState({[cat]: category, edit: true});
+        category[field] = target;
+        this.setState({[cat]: category, edit: true, scanBarcode: false});
     }
 
-    handleSetNestedState = (e, cat, field) => {
-        const target = e.target;
-        const value = target.value;
-        const name = target.name;
+    handleSetNestedState = (value, cat, field) => {
         const category = {...this.state[cat]};
         const categoryFieldObject = {...category[field]};
-        categoryFieldObject[name] = value;
+        categoryFieldObject['id'] = value;
         this.setState({
             [cat]: {
                 ...this.state[cat],
                 [field]: categoryFieldObject
             },
             edit: true
-        })
+        });
+    }
 
+    onScanBarcode = (e) => {
+        e.preventDefault();
+        this.setState({scanBarcode: !this.state.scanBarcode});
     }
 
     onFormSubmit = (e) => {
@@ -194,20 +192,19 @@ class ProductPage extends Component {
             product: this.state.product,
             review: this.state.review
         }
-        this.reviewService.submitProductReview(productItem)
+        ReviewService.submitProductReview(productItem)
             .then((item) => {
                 const {product, review} = item;
                 this.setState({product, review, edit: false});
                 if (this.state.add) {
                     this.setState({add: false, redirect: true})
                 }
-
             });
     }
 
 
     render() {
-        const {product, review, edit, add, redirect} = this.state;
+        const {product, review, edit, add, redirect, scanBarcode} = this.state;
         if (redirect)
             return <Redirect to={`/product/id/${product.id}`}/>;
         if (!add && !product.name) {
@@ -215,28 +212,39 @@ class ProductPage extends Component {
                 <div>loading...</div>
             )
         }
-        const formProduct = add ? this.renderEmptyFields() : this.renderProduct();
-
+        if (scanBarcode)
+            return <ScanBarcode onBarcodeFound={(barcode) => {
+                ReviewService.getReviewByBarcode(barcode)
+                    .then((item) => {
+                        const {product, review} = item;
+                        if (product) {
+                            this.setState({product, review, edit: false, add: false, redirect: true, scanBarcode: false});
+                        } else {
+                            this.handleSetState({id: null, name: barcode}, 'product', 'barcode')
+                        }
+                    })
+            }
+            }/>
+        const formProduct = add ? this.renderEmptyFields() : this.renderExistingProduct();
         const color = edit ? 'success' : 'secondary';
         return (
             <Container>
-                <Form className="productForm" onSubmit={this.onFormSubmit}>
+                <Form className="form productForm" onSubmit={this.onFormSubmit}>
                     {formProduct}
                     <Input
                         type="text"
                         name="rating"
                         placeholder="Рейтинг"
                         value={review.rating}
-                        onChange={(e) => this.handleSetState(e, 'review')}
+                        onChange={(e) => this.handleSetState(e.target.value, 'review', 'rating')}
                     />
                     <Input
                         type="textarea"
                         name="comment"
                         placeholder='Комментарий'
                         value={review.comment}
-                        onChange={(e) => this.handleSetState(e, 'review')}
+                        onChange={(e) => this.handleSetState(e.target.value, 'review', 'comment')}
                     />
-
                     <Button
                         type="submit"
                         className="submit-btn"
@@ -246,7 +254,6 @@ class ProductPage extends Component {
                     </Button>
                 </Form>
             </Container>
-
         )
     }
 }

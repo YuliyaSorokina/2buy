@@ -1,0 +1,49 @@
+stages:
+#  - build
+  - docker-build
+#  - deploy
+
+#build:
+#  image: weboaks/node-karma-protractor-chrome:xvfb
+#  stage: build
+#  before_script:
+#    - npm install
+#  script:
+#    - npm run build
+
+docker-build:
+  image: docker:latest
+  services:
+    - docker:dind
+  stage: docker-build
+  script:
+    - docker build --build-arg BE_HOST=http://51.158.185.68 --build-arg BE_PORT=8080 -t 2buy-frontend .
+    - mkdir target && docker save -o ./target/2buy-frontend.tar 2buy-frontend:latest
+  artifacts:
+    expire_in: 30 min
+    paths:
+      - ./target/2buy-frontend.tar
+
+#deploy:
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  stage: deploy
+#  before_script:
+#    - 'which ssh-agent || ( apk update && apk add openssh-client bash )'
+#    - mkdir -p ~/.ssh
+#    - eval $(ssh-agent -s)
+#    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+#    - echo "$SSH_KEY" | tr -d '\r' | ssh-add - > /dev/null
+#  script:
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "mkdir -p /tmp/deploy"
+#      - scp docker-compose.yml ${SERVER_USER}@${SERVER_URL}:/tmp/deploy
+#      - scp ./target/2buy-backend.tar ${SERVER_USER}@${SERVER_URL}:/tmp/deploy
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "docker load -i /tmp/deploy/2buy-backend.tar"
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "rm /tmp/deploy/2buy-backend.tar"
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "mv /tmp/deploy/docker-compose.yml /media/projects/2buy/pg/docker-compose.yml"
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "docker-compose -f /media/projects/2buy/pg/docker-compose.yml down"
+#      - ssh -p22 ${SERVER_USER}@${SERVER_URL} "docker-compose -f /media/projects/2buy/pg/docker-compose.yml up -d"
+#
+#variables:
+#  MAVEN_OPTS: -Dmaven.repo.local=${CI_PROJECT_DIR}/.m2

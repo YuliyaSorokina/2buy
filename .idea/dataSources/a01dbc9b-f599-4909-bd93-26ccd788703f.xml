@@ -1713,6 +1713,7 @@ UC/10
     </table>
     <table id="50" parent="19" name="user">
       <ObjectId>16470</ObjectId>
+      <Outdated>1</Outdated>
       <Owner>postgres</Owner>
       <StateNumber>493</StateNumber>
     </table>

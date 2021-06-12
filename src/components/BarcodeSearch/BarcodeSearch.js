@@ -1,44 +1,41 @@
 import React, {Component} from 'react';
-import BarcodeScannerComponent from "react-webcam-barcode-scanner";
-import ReviewService from "../../services/ReviewService";
 import {Redirect} from "react-router-dom";
-import {Container} from "reactstrap";
+import ScanBarcode from "../ScanBarcode/ScanBarcode";
+import ReviewService from "../../services/ReviewService";
 
 
 class BarcodeSearch extends Component {
 
-    reviewService = new ReviewService();
     state = {
         barcode: '',
-        redirect: false
+        redirect: false,
+        exists: false
     }
 
-    updateResult = (result) => {
-        if (result) {
-            this.setState({barcode: result.text, redirect: true});
-        } else
-            this.setState({barcode: 'Продукт не найден', redirect: false});
+    updateResult = (barcode) => {
+        ReviewService.getReviewByBarcode(barcode)
+            .then((item) => {
+                const {product} = item;
+                if (product) {
+                    this.setState({barcode: barcode, redirect: true, exists: true});
+                } else {
+                    this.setState({barcode: barcode, redirect: true, exists: false});
+                }
+            })
     }
 
     render() {
-        const {barcode, redirect} = this.state;
+        const {barcode, redirect, exists} = this.state;
         if (redirect) {
-            return <Redirect to={`/product/barcode/${barcode}`}/>;
+            return <Redirect to={
+                exists
+                ? `/product/barcode/${barcode}`
+                : `/product/add?barcode=${barcode}`}/>;
         }
         return (
-            <Container>
-                <div>
-                <BarcodeScannerComponent
-                    width={300}
-                    height={500}
-                    onUpdate={(err, result) => this.updateResult(result)}
-                />
-                </div>
-                {barcode}
-            </Container>
+            <ScanBarcode onBarcodeFound={this.updateResult}/>
         )
     }
-
 }
 
 export default BarcodeSearch

@@ -5,15 +5,13 @@ import CategoryPage from "../../pages/CategoryPage/CategoryPage";
 
 export default class NestedCategories extends Component {
 
-    categoryService = new CategoryService();
-
     state = {
         categories: [],
         title: ''
     }
 
     componentDidMount() {
-        this.categoryService.getCategoryById(this.props.catId)
+        CategoryService.getCategoryById(this.props.catId)
             .then((category) => this.setState({
                 categories: category.childCategories,
                 title: category.name
@@ -33,6 +31,4 @@ export default class NestedCategories extends Component {
             </>
         )
     }
-
-
 }

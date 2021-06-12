@@ -4,14 +4,12 @@ import CategoryService from "../../services/CategoryService";
 
 export default class RootCategories extends Component {
 
-    categoryService = new CategoryService();
-
     state = {
         categories: []
     }
 
     componentDidMount() {
-        this.categoryService.getAllCategories()
+        CategoryService.getAllCategories()
             .then((categories) => this.setState({categories}))
     }
 
@@ -23,6 +21,4 @@ export default class RootCategories extends Component {
                 <CategoriesList categories={categories} title='Все категории'/>
         )
     }
-
-
 }

@@ -17,10 +17,13 @@ const Header = ({onUpdateSearch, isFound}) => {
                 <nav className="header__menu">
                     <ul>
                         <li>
-                            <Link to="/">Мои товары</Link>
+                            <Link to="/product/add">Добавить товар</Link>
                         </li>
                         <li>
-                            <Link to="/">Выйти</Link>
+                            <Link to="/my-reviews">Мои товары</Link>
+                        </li>
+                        <li>
+                            <Link to="/user/logout">Выйти</Link>
                         </li>
                     </ul>
                 </nav>
